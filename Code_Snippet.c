@@ -13,7 +13,7 @@ void DisplayOrder();
 int CancelOrder();
 
 int main() {
-    int res, Yes , yes;
+    int view, Yes, yes;
 
     printf("Welcome!\n");
 
@@ -21,23 +21,22 @@ int main() {
     Order();
 
     printf("\nDo you want to view your order? Press 1: ");
-    scanf("%d", &res);
-    if (res == 1) {
-        DisplayOrder();
-    }
-    
+    scanf("%d", &view);
+    if (view == 1) DisplayOrder();
+
     printf("\nDo you want to search your order? If yes, press 1: ");
-    scanf("%d" , &Yes);
-    if (Yes == 1) {
-    	SearchOrder();
-	}
-	
-	printf("\nDo you want to change your order? If yes, press 1: ");
-    scanf("%d" , &yes);
-    if (yes == 1) {
-    	ChangeOrder();
-	}
-	
+    scanf("%d", &Yes);
+    if (Yes == 1) SearchOrder();
+
+    printf("\nDo you want to change your order? If yes, press 1: ");
+    scanf("%d", &yes);
+    if (yes == 1) ChangeOrder();
+
+    printf("\nDo you want to calculate your bill? Press 1: ");
+    int billChoice;
+    scanf("%d", &billChoice);
+    if (billChoice == 1) 
+	BillCalculation();
 
     CancelOrder();
 
@@ -55,6 +54,7 @@ void registration() {
 
     printf("\nTo proceed with your order you need to register\n");
 
+    getchar(); 
     printf("Enter your name: ");
     fgets(Name, 100, stdin);
 
@@ -63,7 +63,6 @@ void registration() {
 
     printf("Enter your Number: ");
     scanf("%d", &Number);
-    getchar();
 
     FILE *ptr = fopen("OrderFile.txt", "a");
 
@@ -71,9 +70,9 @@ void registration() {
     fprintf(ptr, "Email: %s", Email);
     fprintf(ptr, "Number: %d\n", Number);
 
-    int r = rand();
+    int r = rand() % 90000 + 10000;
     fprintf(ptr, "OrderID: %d\n", r);
-    printf("Your OrderID is: %d" , r);
+    printf("Your OrderID is: %d\n", r);
 
     fclose(ptr);
 
@@ -98,13 +97,13 @@ void Order() {
     printf("How many items you want to buy?: ");
     scanf("%d", &items);
 
+    FILE *ptr = fopen("OrderFile.txt", "a");
+
     while (items > 0) {
         printf("Enter the item you want to order: ");
         scanf("%d", &menu);
 
-        FILE *ptr = fopen("OrderFile.txt", "a");
-
-        if (menu == 1)      fprintf(ptr, "Item: Vegetable Chowmein\n");
+        if (menu == 1) fprintf(ptr, "Item: Vegetable Chowmein\n");
         else if (menu == 2) fprintf(ptr, "Item: Chicken Chowmein\n");
         else if (menu == 3) fprintf(ptr, "Item: Mongolian Chicken\n");
         else if (menu == 4) fprintf(ptr, "Item: Kung Pao Chicken\n");
@@ -114,30 +113,21 @@ void Order() {
         else if (menu == 8) fprintf(ptr, "Item: Beef Steak with Pepper Sauce\n");
         else if (menu == 9) fprintf(ptr, "Item: Chocolate Lava Cake\n");
         else if (menu == 10) fprintf(ptr, "Item: Beef Steak\n");
-        else {
-            printf("Invalid item! Try again.\n");
-            fclose(ptr);
-            continue;
-        }
+        else { printf("Invalid item! Try again.\n"); items++; continue; }
 
-        fclose(ptr);
         items--;
     }
+
+    fclose(ptr);
 }
 
+
 void DisplayOrder() {
-    FILE *ptr;
+    FILE *ptr = fopen("OrderFile.txt", "r");
+    if (!ptr) { printf("Error opening file!\n"); return; }
+
     char line[500];
-
-    ptr = fopen("OrderFile.txt", "r");
-
-    if (!ptr) {
-        printf("Error opening file!\n");
-        return;
-    }
-
     printf("\n--- ORDER DETAILS ---\n");
-
     while (fgets(line, sizeof(line), ptr)) {
         printf("%s", line);
     }
