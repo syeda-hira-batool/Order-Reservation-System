@@ -35,14 +35,13 @@ int main() {
     printf("\nDo you want to calculate your bill? Press 1: ");
     int billChoice;
     scanf("%d", &billChoice);
-    if (billChoice == 1) 
-	BillCalculation();
+    if (billChoice == 1) BillCalculation();
 
+    Delivery();
     CancelOrder();
 
     return 0;
 }
-
 
 
 void registration() {
@@ -54,7 +53,7 @@ void registration() {
 
     printf("\nTo proceed with your order you need to register\n");
 
-    getchar(); 
+    getchar();
     printf("Enter your name: ");
     fgets(Name, 100, stdin);
 
@@ -127,10 +126,21 @@ void DisplayOrder() {
     if (!ptr) { printf("Error opening file!\n"); return; }
 
     char line[500];
-    printf("\n--- ORDER DETAILS ---\n");
+    char lastOrderID[50] = "";
+    char orderLines[2000] = "";
+
     while (fgets(line, sizeof(line), ptr)) {
-        printf("%s", line);
+        if (strncmp(line, "OrderID:", 8) == 0) {
+            strcpy(lastOrderID, line);
+            orderLines[0] = '\0'; 
+        }
+        if (lastOrderID[0] != '\0') {
+            strcat(orderLines, line);
+        }
     }
+
+    printf("\n--- YOUR ORDER DETAILS ---\n");
+    printf("%s", orderLines);
 
     fclose(ptr);
 }
@@ -148,4 +158,5 @@ int CancelOrder() {
         return 0;
     }
 }
+
 
