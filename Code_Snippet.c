@@ -417,3 +417,42 @@ int Delivery(int bill) {
 
     return bill;
 }
+
+int BillCalculation() {
+    FILE *ptr = fopen("OrderFile.txt", "r");
+    char line[200];
+    int price[200], count = 0;
+
+    if (!ptr) { printf("Error opening file!\n"); return 0; }
+
+    int lastOrder = 0;
+
+    while (fgets(line, sizeof(line), ptr)) {
+        if (strncmp(line, "OrderID:", 8) == 0) {
+            count = 0;
+            lastOrder = 1;
+        }
+        if (!lastOrder) continue;
+
+        if (strncmp(line, "Item: Vegetable Chowmein", 24) == 0) price[count++] = 500;
+        else if (strncmp(line, "Item: Chicken Chowmein", 22) == 0) price[count++] = 750;
+        else if (strncmp(line, "Item: Mongolian Chicken", 23) == 0) price[count++] = 520;
+        else if (strncmp(line, "Item: Kung Pao Chicken", 22) == 0) price[count++] = 820;
+        else if (strncmp(line, "Item: Red Dragon Chicken", 23) == 0) price[count++] = 700;
+        else if (strncmp(line, "Item: Dynamite Prawns", 21) == 0) price[count++] = 580;
+        else if (strncmp(line, "Item: Mongolian Veal Ribs", 24) == 0) price[count++] = 780;
+        else if (strncmp(line, "Item: Beef Steak with Pepper Sauce", 33) == 0) price[count++] = 540;
+        else if (strncmp(line, "Item: Chocolate Lava Cake", 25) == 0) price[count++] = 880;
+        else if (strncmp(line, "Item: Beef Steak", 16) == 0) price[count++] = 750;
+    }
+
+    fclose(ptr);
+    int total = recursiveSum(price, 0, count);
+    printf("Your total bill is: %d RS\n", total);
+    return total;
+}
+
+int recursiveSum(int arr[], int index, int n) {
+    if (index == n) return 0;
+    return arr[index] + recursiveSum(arr, index + 1, n);
+}
