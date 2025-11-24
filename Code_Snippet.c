@@ -132,6 +132,7 @@ void registration() {
 
     printf("Enter your Number: ");
     scanf("%d", &Number);
+    getchar();
 
     FILE *ptr = fopen("OrderFile.txt", "a");
     if (!ptr) {
