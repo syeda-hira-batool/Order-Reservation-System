@@ -299,3 +299,92 @@ int CancelOrder() {
 
 
 
+int ChangeOrder() {
+    FILE *ptr, *temp;
+    char line[200];
+    char searchID[50];
+    int found = 0;
+
+    printf("Enter OrderID to change: ");
+    scanf("%s", searchID);
+
+    ptr = fopen("OrderFile.txt", "r");
+    temp = fopen("temp.txt", "w");
+
+    if (!ptr || !temp) {
+        printf("Error opening file!\n");
+        return 0;
+    }
+
+    char fileOrderID[50];
+
+    while (fgets(line, sizeof(line), ptr)) {
+        if (sscanf(line, "OrderID: %s", fileOrderID) == 1 &&
+            strcmp(fileOrderID, searchID) == 0) {
+
+            found = 1;
+            fprintf(temp, "%s", line);
+
+            printf("Order found! Enter new order details.\n");
+            printf("============================================================\n");
+            printf("            Here is the Menu for your reference:            \n");
+            printf("============================================================\n");
+            printf("1. Vegetable Chowmein------------------------------ 500RS\n");
+            printf("2. Chicken Chowmein-------------------------------- 750RS\n");
+            printf("3. Mongolian Chicken------------------------------- 520RS\n");
+            printf("4. Kung Pao Chicken-------------------------------- 820RS\n");
+            printf("5. Red Dragon Chicken------------------------------ 700RS\n");
+            printf("6. Dynamite Prawns--------------------------------- 580RS\n");
+            printf("7. Mongolian Veal Ribs----------------------------- 780RS\n");
+            printf("8. Beef Steak with Pepper Sauce-------------------- 540RS\n");
+            printf("9. Chocolate Lava Cake----------------------------- 880RS\n");
+            printf("10. Beef Steak------------------------------------- 750RS\n");
+            printf("============================================================\n");
+
+            int items, menu;
+            printf("How many items in new order? ");
+            scanf("%d", &items);
+
+            while (items--) {
+                printf("Enter new item number: ");
+                scanf("%d", &menu);
+
+                if (menu == 1) fprintf(temp, "Item: Vegetable Chowmein\n");
+                else if (menu == 2) fprintf(temp, "Item: Chicken Chowmein\n");
+                else if (menu == 3) fprintf(temp, "Item: Mongolian Chicken\n");
+                else if (menu == 4) fprintf(temp, "Item: Kung Pao Chicken\n");
+                else if (menu == 5) fprintf(temp, "Item: Red Dragon Chicken\n");
+                else if (menu == 6) fprintf(temp, "Item: Dynamite Prawns\n");
+                else if (menu == 7) fprintf(temp, "Item: Mongolian Veal Ribs\n");
+                else if (menu == 8) fprintf(temp, "Item: Beef Steak with Pepper Sauce\n");
+                else if (menu == 9) fprintf(temp, "Item: Chocolate Lava Cake\n");
+                else if (menu == 10) fprintf(temp, "Item: Beef Steak\n");
+            }
+
+            
+            while (fgets(line, sizeof(line), ptr)) {
+                if (strncmp(line, "Name:", 5) == 0) break;
+            }
+
+            if (!feof(ptr))
+                fprintf(temp, "%s", line);
+        }
+        else {
+            fprintf(temp, "%s", line);
+        }
+    }
+
+    fclose(ptr);
+    fclose(temp);
+
+    remove("OrderFile.txt");
+    rename("temp.txt", "OrderFile.txt");
+
+    if (found)
+        printf("Order updated successfully!\n");
+    else
+        printf("OrderID not found!\n");
+
+    return found;
+}
+
