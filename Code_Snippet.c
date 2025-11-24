@@ -61,7 +61,7 @@ int main() {
     printf("               Thank you for using the system!              \n");
     printf("============================================================\n");
 
-    return 0;
+    return 0;
 }
 
 
@@ -299,4 +299,163 @@ int CancelOrder() {
 }
 
 
+
+int ChangeOrder() {
+    FILE *ptr, *temp;
+    char line[200];
+    char searchID[50];
+    int found = 0;
+
+    printf("Enter OrderID to change: ");
+    scanf("%s", searchID);
+
+    ptr = fopen("OrderFile.txt", "r");
+    temp = fopen("temp.txt", "w");
+
+    if (!ptr || !temp) {
+        printf("Error opening file!\n");
+        return 0;
+    }
+
+    char fileOrderID[50];
+
+    while (fgets(line, sizeof(line), ptr)) {
+        if (sscanf(line, "OrderID: %s", fileOrderID) == 1 &&
+            strcmp(fileOrderID, searchID) == 0) {
+
+            found = 1;
+            fprintf(temp, "%s", line);
+
+            printf("Order found! Enter new order details.\n");
+            printf("============================================================\n");
+            printf("            Here is the Menu for your reference:            \n");
+            printf("============================================================\n");
+            printf("1. Vegetable Chowmein------------------------------ 500RS\n");
+            printf("2. Chicken Chowmein-------------------------------- 750RS\n");
+            printf("3. Mongolian Chicken------------------------------- 520RS\n");
+            printf("4. Kung Pao Chicken-------------------------------- 820RS\n");
+            printf("5. Red Dragon Chicken------------------------------ 700RS\n");
+            printf("6. Dynamite Prawns--------------------------------- 580RS\n");
+            printf("7. Mongolian Veal Ribs----------------------------- 780RS\n");
+            printf("8. Beef Steak with Pepper Sauce-------------------- 540RS\n");
+            printf("9. Chocolate Lava Cake----------------------------- 880RS\n");
+            printf("10. Beef Steak------------------------------------- 750RS\n");
+            printf("============================================================\n");
+
+            int items, menu;
+            printf("How many items in new order? ");
+            scanf("%d", &items);
+
+            while (items--) {
+                printf("Enter new item number: ");
+                scanf("%d", &menu);
+
+                if (menu == 1) fprintf(temp, "Item: Vegetable Chowmein\n");
+                else if (menu == 2) fprintf(temp, "Item: Chicken Chowmein\n");
+                else if (menu == 3) fprintf(temp, "Item: Mongolian Chicken\n");
+                else if (menu == 4) fprintf(temp, "Item: Kung Pao Chicken\n");
+                else if (menu == 5) fprintf(temp, "Item: Red Dragon Chicken\n");
+                else if (menu == 6) fprintf(temp, "Item: Dynamite Prawns\n");
+                else if (menu == 7) fprintf(temp, "Item: Mongolian Veal Ribs\n");
+                else if (menu == 8) fprintf(temp, "Item: Beef Steak with Pepper Sauce\n");
+                else if (menu == 9) fprintf(temp, "Item: Chocolate Lava Cake\n");
+                else if (menu == 10) fprintf(temp, "Item: Beef Steak\n");
+            }
+
+            
+            while (fgets(line, sizeof(line), ptr)) {
+                if (strncmp(line, "Name:", 5) == 0) break;
+            }
+
+            if (!feof(ptr))
+                fprintf(temp, "%s", line);
+        }
+        else {
+            fprintf(temp, "%s", line);
+        }
+    }
+
+    fclose(ptr);
+    fclose(temp);
+
+    remove("OrderFile.txt");
+    rename("temp.txt", "OrderFile.txt");
+
+    if (found)
+        printf("Order updated successfully!\n");
+    else
+        printf("OrderID not found!\n");
+
+    return found;
+}
+
+
+int Delivery(int bill) {
+    int choice;
+    char address[200];
+
+    printf("\nSelect Order Collection Method\n");
+    printf("1. Delivery\n2. Pickup\nEnter your choice: ");
+    scanf("%d", &choice);
+
+
+    if (choice == 1) {
+        getchar();
+        printf("Enter your delivery address: ");
+        gets(address);
+
+        printf("Collection Method: Home Delivery\n");
+        
+
+        bill += 50;
+        printf("\n");
+        printf("Your bill now is %d RS including 50 RS delivery charges.\n", bill);
+        printf("Your order will be delivered shortly!\n");
+    } else {
+        printf("Collection Method: Pickup\n");
+        printf("You selected Pickup.\n");
+    }
+
+    return bill;
+}
+
+int BillCalculation() {
+    FILE *ptr = fopen("OrderFile.txt", "r");
+    char line[200];
+    int price[200], count = 0;
+
+    if (!ptr) { printf("Error opening file!\n"); return 0; }
+
+    int lastOrder = 0;
+
+    while (fgets(line, sizeof(line), ptr)) {
+        if (strncmp(line, "OrderID:", 8) == 0) {
+            count = 0;
+            lastOrder = 1;
+        }
+        if (!lastOrder) continue;
+
+        if (strncmp(line, "Item: Vegetable Chowmein", 24) == 0) price[count++] = 500;
+        else if (strncmp(line, "Item: Chicken Chowmein", 22) == 0) price[count++] = 750;
+        else if (strncmp(line, "Item: Mongolian Chicken", 23) == 0) price[count++] = 520;
+        else if (strncmp(line, "Item: Kung Pao Chicken", 22) == 0) price[count++] = 820;
+        else if (strncmp(line, "Item: Red Dragon Chicken", 23) == 0) price[count++] = 700;
+        else if (strncmp(line, "Item: Dynamite Prawns", 21) == 0) price[count++] = 580;
+        else if (strncmp(line, "Item: Mongolian Veal Ribs", 24) == 0) price[count++] = 780;
+        else if (strncmp(line, "Item: Beef Steak with Pepper Sauce", 33) == 0) price[count++] = 540;
+        else if (strncmp(line, "Item: Chocolate Lava Cake", 25) == 0) price[count++] = 880;
+        else if (strncmp(line, "Item: Beef Steak", 16) == 0) price[count++] = 750;
+    }
+
+    fclose(ptr);
+    int total = recursiveSum(price, 0, count);
+    printf("Your total bill is: %d RS\n", total);
+    return total;
+}
+
+
+int recursiveSum(int arr[], int index, int n) {
+    if (index == n) return 0;
+    return arr[index] + recursiveSum(arr, index + 1, n);
+}
 
