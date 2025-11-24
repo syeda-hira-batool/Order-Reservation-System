@@ -388,3 +388,32 @@ int ChangeOrder() {
     return found;
 }
 
+
+int Delivery(int bill) {
+    int choice;
+    char address[200];
+
+    printf("\nSelect Order Collection Method\n");
+    printf("1. Delivery\n2. Pickup\nEnter your choice: ");
+    scanf("%d", &choice);
+
+
+    if (choice == 1) {
+        getchar();
+        printf("Enter your delivery address: ");
+        gets(address);
+
+        printf("Collection Method: Home Delivery\n");
+        
+
+        bill += 50;
+        printf("\n");
+        printf("Your bill now is %d RS including 50 RS delivery charges.\n", bill);
+        printf("Your order will be delivered shortly!\n");
+    } else {
+        printf("Collection Method: Pickup\n");
+        printf("You selected Pickup.\n");
+    }
+
+    return bill;
+}
