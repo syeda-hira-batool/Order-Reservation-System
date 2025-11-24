@@ -452,7 +452,9 @@ int BillCalculation() {
     return total;
 }
 
+
 int recursiveSum(int arr[], int index, int n) {
     if (index == n) return 0;
     return arr[index] + recursiveSum(arr, index + 1, n);
 }
+
