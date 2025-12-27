@@ -118,7 +118,7 @@ void SearchOrder() {
 void registration() {
     srand(time(NULL));
     char Name[100], Email[100];
-    int Number;
+    long long Number;
 
     printf("\nTo proceed with your order you need to register first!\n");
     
@@ -131,7 +131,7 @@ void registration() {
     fgets(Email, 100, stdin);
 
     printf("Enter your Number: ");
-    scanf("%d", &Number);
+    scanf("%lld", &Number);
     getchar();
 
     FILE *ptr = fopen("OrderFile.txt", "a");
@@ -142,7 +142,7 @@ void registration() {
 
     fprintf(ptr, "Name: %s", Name);
     fprintf(ptr, "Email: %s", Email);
-    fprintf(ptr, "Number: %d\n", Number);
+    fprintf(ptr, "Number: +92%lld\n", Number);
 
     int r = rand() ; 
     fprintf(ptr, "OrderID: %d\n", r);
@@ -151,6 +151,7 @@ void registration() {
     fclose(ptr);
     printf("Registration saved successfully!\n");
 }
+
 
 void Order() {
 	
